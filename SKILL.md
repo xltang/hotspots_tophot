@@ -1,6 +1,6 @@
 ---
 name: tophot
-description: 用于拉取并展示「每日热点」内容（接口为 https://hotspot.api4claw.com/hotspots/platform/每日热点?timestamp=$TIME_STEMP，返回 JSON 数组）。按 source_name 分组标题。默认会提示用户创建定时任务（不自动执行），在用户确认后提供 cron 注册命令。不使用本地 user_id。适用于用户查询每日热点、服务状态、按 source_name 分组标题，或由已存在的定时消息触发执行。触发词："每日热点"、"热点"。
+description: 用于拉取并展示热点内容（接口为 https://hotspot.api4claw.com/hotspots/platform/{平台名}?timestamp=$TIME_STEMP，返回 JSON 数组）。按 source_name 分组标题。默认会提示用户创建定时任务（不自动执行），在用户确认后提供 cron 注册命令。不使用本地 user_id。适用于用户查询每日热点、微博热点、新闻联播、知乎热点、腾讯早报、服务状态、按 source_name 分组标题，或由已存在的定时消息触发执行。触发词："每日热点"、"热点"、"微博热点"、"新闻联播"、"知乎热点"、"腾讯早报"。
 required_tools:
   - web_fetch
 optional_tools:
@@ -93,9 +93,15 @@ Base URL:
 
 - `https://hotspot.api4claw.com`
 
-Only endpoint:
+Supported endpoints:
 
-- `GET /hotspots/platform/每日热点?timestamp=$TIME_STEMP`: 使用 **`web_fetch` 工具**（`extractMode: "text"`）获取每日热点 JSON 数据。调用前必须先生成分钟级 `TIME_STEMP`。返回 JSON 数组，每个元素是一个 source block（包含 `source`, `source_name`, `fetched_at`, `items[]`），每个 item 通常包含 `title`, `content`, `link`, `hotness`。
+- `GET /hotspots/platform/每日热点?timestamp=$TIME_STEMP`
+- `GET /hotspots/platform/微博?timestamp=$TIME_STEMP`
+- `GET /hotspots/platform/新闻联播?timestamp=$TIME_STEMP`
+- `GET /hotspots/platform/知乎?timestamp=$TIME_STEMP`
+- `GET /hotspots/platform/腾讯早报?timestamp=$TIME_STEMP`
+
+调用规则：使用 **`web_fetch` 工具**（`extractMode: "text"`）请求对应 URL。调用前必须先生成分钟级 `TIME_STEMP`。返回 JSON 数组时，每个元素是一个 source block（包含 `source`, `source_name`, `fetched_at`, `items[]`），每个 item 通常包含 `title`, `content`, `link`, `hotness`。
 
 ## Consumer Workflow
 
@@ -106,6 +112,22 @@ For each user intent:
   2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/每日热点?timestamp=$TIME_STEMP`（`extractMode: "text"`）
   3. 如果返回内容是 JSON 数组，解析并扁平化所有 sources 的 `items[]`
   4. 按 `source_name` 分组展示 item 标题
+- `微博热点`:
+  1. 先生成分钟级 `TIME_STEMP`
+  2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/微博?timestamp=$TIME_STEMP`
+  3. 解析 JSON 并按 `source_name` 分组展示标题
+- `新闻联播`:
+  1. 先生成分钟级 `TIME_STEMP`
+  2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/新闻联播?timestamp=$TIME_STEMP`
+  3. 解析 JSON 并按 `source_name` 分组展示标题
+- `知乎热点`:
+  1. 先生成分钟级 `TIME_STEMP`
+  2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/知乎?timestamp=$TIME_STEMP`
+  3. 解析 JSON 并按 `source_name` 分组展示标题
+- `腾讯早报`:
+  1. 先生成分钟级 `TIME_STEMP`
+  2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/腾讯早报?timestamp=$TIME_STEMP`
+  3. 解析 JSON 并按 `source_name` 分组展示标题
 - `status`: 先生成分钟级 `TIME_STEMP`，再 **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/每日热点?timestamp=$TIME_STEMP`，报告可达性 + 基础统计（source 数量、item 总数）。**不要** 展示 `fetched_at` 或 `data_date`
 - `source filter`: 按 `source`/`source_name` 过滤展示
 
@@ -154,5 +176,10 @@ When showing status:
 ## Security Rules
 
 - Do not expose tokens or secret headers in output.
-- Do not call any hotspot endpoint except `/hotspots/platform/每日热点?timestamp=$TIME_STEMP`.
+- Do not call any hotspot endpoint except:
+  - `/hotspots/platform/每日热点?timestamp=$TIME_STEMP`
+  - `/hotspots/platform/微博?timestamp=$TIME_STEMP`
+  - `/hotspots/platform/新闻联播?timestamp=$TIME_STEMP`
+  - `/hotspots/platform/知乎?timestamp=$TIME_STEMP`
+  - `/hotspots/platform/腾讯早报?timestamp=$TIME_STEMP`
 - Do not persist identifiers or create background tasks unless the user explicitly requests and approves it.
