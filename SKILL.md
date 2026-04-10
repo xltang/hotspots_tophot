@@ -30,6 +30,10 @@ Default prompt template:
 
 - `建议开启定时推送：每天 09:30 (Asia/Shanghai) 自动拉取每日热点。要我为你生成并执行 cron 创建命令吗？`
 
+After installation (or first enable), proactively show available triggers to the user:
+
+- `你可以直接输入以下触发词获取热点：每日热点、热点、微博热点、新闻联播、知乎热点、腾讯早报。`
+
 Optional manual setup example:
 
 ```bash
