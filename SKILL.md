@@ -1,6 +1,6 @@
 ---
 name: tophot
-description: 用于拉取并展示热点内容（接口为 https://hotspot.api4claw.com/hotspots/platform/{平台名}?timestamp=$TIME_STEMP，返回 JSON 数组）。按 source_name 分组标题。默认会提示用户创建定时任务（不自动执行），在用户确认后提供 cron 注册命令。不使用本地 user_id。适用于用户查询每日热点、微博热点、新闻联播、知乎热点、腾讯早报、服务状态、按 source_name 分组标题，或由已存在的定时消息触发执行。触发词："每日热点"、"热点"、"微博热点"、"新闻联播"、"知乎热点"、"腾讯早报"。
+description: 用于拉取并展示热点内容（接口为 https://hotspot.api4claw.com/hotspots/platform/{平台名}?timestamp=$TIME_STEMP，返回 JSON 数组）。按 source_name 分组标题。默认会提示用户创建定时任务（不自动执行），在用户确认后提供 cron 注册命令。不使用本地 user_id。适用于用户查询每日热点、微博热点、新闻联播、知乎热点、腾讯早报、服务状态、按 source_name 分组标题，或由已存在的定时消息触发执行。触发词："今日热点", "每日热点", "热点", "微博热点", "新闻联播", "知乎热点", "腾讯早报"。
 required_tools:
   - web_fetch
 optional_tools:
@@ -32,7 +32,7 @@ Default prompt template:
 
 After installation (or first enable), proactively show available triggers to the user:
 
-- `你可以直接输入以下触发词获取热点：每日热点、热点、微博热点、新闻联播、知乎热点、腾讯早报。`
+- `你可以直接输入以下触发词获取热点：今日热点, 每日热点, 热点, 微博热点, 新闻联播, 知乎热点, 腾讯早报。`
 
 Optional manual setup example:
 
@@ -111,7 +111,7 @@ Supported endpoints:
 
 For each user intent:
 
-- `每日热点`:
+- `今日热点` / `每日热点`:
   1. 先生成分钟级 `TIME_STEMP`（示例：`TIME_STEMP="$(TZ=Asia/Shanghai date +%Y-%m-%dT%H:%M)"`）
   2. **使用 `web_fetch` 工具** 调用 `GET https://hotspot.api4claw.com/hotspots/platform/每日热点?timestamp=$TIME_STEMP`（`extractMode: "text"`）
   3. 如果返回内容是 JSON 数组，解析并扁平化所有 sources 的 `items[]`
